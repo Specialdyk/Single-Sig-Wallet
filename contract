@@ -1,0 +1,32 @@
+// SPDX-License-Identifier:MIT
+pragma solidity ^0.8.0;
+
+contract SingleSigWallet {
+event Deposit(uint amount);
+    address public owner;// The Owner of the wallet 
+    uint256 public accountBalance;
+
+constructor () {
+    owner = msg.sender;// The Contract depolyer becomes the owner
+}
+modifier onlyOwner () {
+require(msg.sender == owner,"NOT AUTHORIZED");
+_;
+}
+//======= DEPOSIT ==========
+function deposit() public  payable {
+    emit Deposit(msg.value);
+}
+//======= TO GET THE BALANCES=========
+
+function getAccountBalance() public view returns(uint256) {
+    return address(this).balance;
+}
+
+// ====== wITHDRAWALS=======
+function withdraw(uint256 _amount) public onlyOwner {
+    require(address(this).balance <= _amount, "INSUFFICIENT FUNDS");
+payable(owner).transfer(_amount);
+}
+
+}
